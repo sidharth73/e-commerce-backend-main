@@ -1,0 +1,107 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id    Int     @id @default(autoincrement())
+  name String
+  email String  @unique
+  password String
+  reviews Review[]
+  orders Order[]
+  products Product[]
+  isAdmin Boolean @default(false)
+  passwordResetToken String?
+  passwordResetExpires DateTime?
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now())
+}
+
+model Product {
+  id    Int     @id @default(autoincrement())
+  name  String 
+  image String
+  brand String
+  category String
+  description String
+  reviews Review[]
+  rating Int @default(0)
+  price Int @default(0)
+  countInStock Int @default(0)
+  orderItem OrderItem[]
+  numReviews Int
+  userId Int
+  user User @relation(fields: [userId], references: [id])
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now())
+}
+
+model Review {
+  id    Int     @id @default(autoincrement())
+  userId Int
+  productId Int
+  user User     @relation(fields: [userId], references: [id])
+  product Product @relation(fields: [productId], references: [id])
+  name String
+  rating Int
+  comment String
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now())
+}
+
+model Order {
+  id    Int     @id @default(autoincrement())
+  userId Int
+  user User     @relation(fields: [userId], references: [id])
+  orderItems OrderItem[]
+  shippingAddress ShippingAddress[]
+  paymentMethod String
+  paymentResult PaymentResult[]
+  itemsPrice Int
+  taxPrice Int
+  shippingPrice Int
+  totalPrice Int
+  paidAt DateTime
+  isDelivered Boolean @default(false)
+  deliveredAt DateTime
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now())
+}
+
+model PaymentResult {
+  id    Int     @id @default(autoincrement())
+  orderId Int
+  order Order   @relation(fields: [orderId], references: [id])
+  status String
+  updateTime String
+  emailAddress String
+}
+model ShippingAddress {
+  id    Int     @id @default(autoincrement())
+  orderId Int
+  orders Order @relation(fields: [orderId],references: [id])
+  addres String
+  city String
+  postalCode String
+  country String
+}
+
+model OrderItem {
+  id Int @id @default(autoincrement())
+  name String
+  qty Int
+  image String
+  price Int
+  orderId Int
+  productId Int 
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+}

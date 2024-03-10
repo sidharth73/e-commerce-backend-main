@@ -1,0 +1,25 @@
+{
+    "roles": [
+        {
+            "name": "admin",
+            "permissions": [
+                "create_user",
+                "delete_user"
+            ]
+        },
+        {
+            "name": "creator",
+            "permissions": [
+                "create_song",
+                "update_song",
+                "delete_song"
+            ]
+        },
+        {
+            "name": "user",
+            "permissions": [
+                "read_song"
+            ]
+        }
+    ]
+}
